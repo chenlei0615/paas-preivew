@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.meicloud.ship</groupId>
+        <artifactId>meicloud-paas-preview</artifactId>
+        <version>1.0.0-RELEASE</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.meicloud.ship</groupId>
+    <artifactId>meicloud-paas-preview-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>meicloud-paas-preview-api</name>
+    <description>meicloud-paas-preview-api</description>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.meicloud.ship</groupId>
+            <artifactId>meicloud-paas-preview-core</artifactId>
+            <version>1.0.0-RELEASE</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.meicloud.ship.preview.PreviewApiApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
