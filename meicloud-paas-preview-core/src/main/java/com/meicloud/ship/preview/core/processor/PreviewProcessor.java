@@ -1,6 +1,6 @@
 package com.meicloud.ship.preview.core.processor;
 
-import com.meicloud.ship.preview.core.config.JodconverterConfig;
+import com.meicloud.ship.preview.core.config.OfficeManagerInstance;
 import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.jodconverter.core.DocumentConverter;
@@ -22,22 +22,14 @@ import java.io.OutputStream;
 @Slf4j
 public class PreviewProcessor {
 
-    private static LocalOfficeManager localOfficeManager = LocalOfficeManager.builder()
-            .officeHome(JodconverterConfig.getOfficeHome()).install().build();
-
-
-    PreviewProcessor() throws OfficeException {
-        log.info("***启动OfficeManager***");
-        if (!localOfficeManager.isRunning()) {
-            localOfficeManager.start();
-        }
-    }
+    private PreviewProcessor(){}
 
     /**
      * @param inputStream  源文件输入流
      * @param outputStream pdf目标输出流
      */
     public static void convert(InputStream inputStream, OutputStream outputStream, String suffix) {
+        LocalOfficeManager localOfficeManager = OfficeManagerInstance.start();
         DocumentConverter converter = LocalConverter.builder().officeManager(localOfficeManager).build();
         final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(suffix.toUpperCase());
         try (final InputStream is = documentFormatEnum.getInputStream(inputStream)) {
