@@ -1,8 +1,9 @@
 package com.meicloud.ship.preview.controller;
 
 import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
-import com.meicloud.ship.preview.core.processor.PreviewProcessor;
+import com.meicloud.ship.preview.core.processor.OfficeConvert;
 import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,10 +26,13 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequestMapping("v1")
+@RequiredArgsConstructor
 public class PreviewController {
 
+    private final OfficeConvert officeConvert;
+
     @PostMapping("/preview")
-    public void preview(MultipartFile file, HttpServletResponse response) throws Exception {
+    public void preview1(MultipartFile file, HttpServletResponse response) throws Exception {
         log.info(">>> file.getName()：【{}】，file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getName(), file.getOriginalFilename(), file.getSize());
         final String fileSuffix = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
 
@@ -36,7 +40,7 @@ public class PreviewController {
             try {
                 final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(fileSuffix.toUpperCase());
                 if (!Objects.isNull(documentFormatEnum)) {
-                    PreviewProcessor.convert(file.getInputStream(), bos, fileSuffix);
+                    officeConvert.convert(file.getInputStream(), bos, fileSuffix);
                 }
             } catch (IllegalArgumentException e) {
                 bos.reset();
@@ -50,4 +54,5 @@ public class PreviewController {
             out.flush();
         }
     }
+
 }
