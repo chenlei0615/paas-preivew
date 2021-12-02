@@ -3,6 +3,7 @@ package com.meicloud.ship.preview.controller;
 import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
 import com.meicloud.ship.preview.core.processor.OfficeConvert;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,8 +32,9 @@ public class PreviewController {
 
     private final OfficeConvert officeConvert;
 
+    @ApiOperation("通过文件上传预览")
     @PostMapping("/preview")
-    public void preview1(MultipartFile file, HttpServletResponse response) throws Exception {
+    public void preview(MultipartFile file, HttpServletResponse response) throws Exception {
         log.info(">>> file.getName()：【{}】，file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getName(), file.getOriginalFilename(), file.getSize());
         final String fileSuffix = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
 
