@@ -27,6 +27,24 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <pom.office.home>D:/software/libreoffice/</pom.office.home>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <pom.office.home>/opt/libreoffice</pom.office.home>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
