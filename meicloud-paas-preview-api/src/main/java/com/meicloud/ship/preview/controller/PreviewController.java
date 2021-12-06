@@ -2,14 +2,13 @@ package com.meicloud.ship.preview.controller;
 
 import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
 import com.meicloud.ship.preview.core.processor.OfficeConvert;
+import com.meicloud.ship.preview.service.PreviewService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -31,6 +30,8 @@ import java.util.Objects;
 public class PreviewController {
 
     private final OfficeConvert officeConvert;
+
+    private final PreviewService previewService;
 
     @ApiOperation("通过文件上传预览")
     @PostMapping("/preview")
@@ -55,6 +56,13 @@ public class PreviewController {
             out.write(bytes);
             out.flush();
         }
+    }
+
+    @ApiOperation("通过url地址预览")
+    @GetMapping("/preview/url")
+    public void previewByUrl(@RequestParam("url") String fileUrl) throws Exception {
+        previewService.convertFile2pdfByUrl(fileUrl);
+
     }
 
 }
