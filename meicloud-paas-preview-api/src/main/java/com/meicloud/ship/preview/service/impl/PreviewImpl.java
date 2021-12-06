@@ -39,7 +39,7 @@ public class PreviewImpl implements PreviewService {
 
         String fileExtName = FileUtil.getExtension(in);
         if (StringUtils.isBlank(fileExtName)) {
-            throw new FilePreviewException(ErrorCodeEnum.ERROR.getCode(), "解析文件扩展名地址失败");
+            throw new FilePreviewException(ErrorCodeEnum.ERROR.getCode(), "解析文件扩展名失败");
         }
         try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             try {
