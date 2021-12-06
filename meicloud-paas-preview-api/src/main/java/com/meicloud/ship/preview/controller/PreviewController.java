@@ -59,10 +59,8 @@ public class PreviewController {
     }
 
     @ApiOperation("通过url地址预览")
-    @GetMapping("/preview/url")
+    @GetMapping("/preview/link")
     public void previewByUrl(@RequestParam("url") String fileUrl) throws Exception {
         previewService.convertFile2pdfByUrl(fileUrl);
-
     }
-
 }
