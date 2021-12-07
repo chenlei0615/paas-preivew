@@ -20,8 +20,8 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class PreviewImpl implements PreviewService {
-    @Autowired
-    private OfficeConvert officeConvert;
+//    @Autowired
+//    private OfficeConvert officeConvert;
 
     @Autowired
     private HttpServletResponse response;
@@ -45,7 +45,7 @@ public class PreviewImpl implements PreviewService {
             try {
                 final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(fileExtName.toUpperCase());
                 if (!Objects.isNull(documentFormatEnum)) {
-                    officeConvert.convert(in, bos, fileExtName);
+//                    officeConvert.convert(in, bos, fileExtName);
                 }
             } catch (IllegalArgumentException e) {
                 bos.reset();
