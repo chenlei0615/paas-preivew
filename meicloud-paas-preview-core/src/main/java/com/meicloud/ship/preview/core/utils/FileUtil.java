@@ -1,6 +1,5 @@
 package com.meicloud.ship.preview.core.utils;
 
-import com.sun.star.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.HttpHeaders;
