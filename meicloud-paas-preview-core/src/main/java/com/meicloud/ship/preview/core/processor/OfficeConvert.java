@@ -19,8 +19,8 @@ import java.io.OutputStream;
 @Slf4j
 @Component
 public class OfficeConvert {
-//    @Resource
-//    private DocumentConverter documentConverter;
+    @Resource
+    private DocumentConverter documentConverter;
 
     /**
      * @param inputStream  源文件输入流
@@ -33,7 +33,7 @@ public class OfficeConvert {
             log.info(">>> 待转换的文档类型：{}", format);
             final DocumentFormat targetFormat = documentFormatEnum.getTargetFormat();
             log.info(">>> 转换的目标文档类型：{}", targetFormat);
-//            documentConverter.convert(is).as(format).to(outputStream).as(targetFormat).execute();
+            documentConverter.convert(is).as(format).to(outputStream).as(targetFormat).execute();
         }
         log.info(">>> 文件转换结束");
     }

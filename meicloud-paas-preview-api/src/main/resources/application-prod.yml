@@ -25,8 +25,8 @@ jodconverter:
     # 设置LibreOffice主目录
     office-home: @pom.office.home@
     # 开启多个LibreOffice进程，每个端口对应一个进程
-    port-numbers: 8100,8101,8102
+#    port-numbers: 8100,8101,8102
     # LibreOffice进程重启前的最大进程数
-    max-tasks-per-process: 100
-    taskExecutionTimeoutMinutes: 5
-    taskQueueTimeoutHours: 1
+#    max-tasks-per-process: 100
+#    taskExecutionTimeoutMinutes: 5
+#    taskQueueTimeoutHours: 1
