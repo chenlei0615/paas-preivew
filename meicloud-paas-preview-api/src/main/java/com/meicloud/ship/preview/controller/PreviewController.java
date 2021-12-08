@@ -29,7 +29,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PreviewController {
 
-    private final OfficeConvert officeConvert;
+//    private final OfficeConvert officeConvert;
 
     private final PreviewService previewService;
 
@@ -43,7 +43,7 @@ public class PreviewController {
             try {
                 final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(fileSuffix.toUpperCase());
                 if (!Objects.isNull(documentFormatEnum)) {
-                    officeConvert.convert(file.getInputStream(), bos, fileSuffix);
+//                    officeConvert.convert(file.getInputStream(), bos, fileSuffix);
                 }
             } catch (IllegalArgumentException e) {
                 bos.reset();
@@ -59,10 +59,8 @@ public class PreviewController {
     }
 
     @ApiOperation("通过url地址预览")
-    @GetMapping("/preview/url")
+    @GetMapping("/preview/link")
     public void previewByUrl(@RequestParam("url") String fileUrl) throws Exception {
         previewService.convertFile2pdfByUrl(fileUrl);
-
     }
-
 }

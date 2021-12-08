@@ -20,8 +20,8 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class PreviewImpl implements PreviewService {
-    @Autowired
-    private OfficeConvert officeConvert;
+//    @Autowired
+//    private OfficeConvert officeConvert;
 
     @Autowired
     private HttpServletResponse response;
@@ -39,13 +39,13 @@ public class PreviewImpl implements PreviewService {
 
         String fileExtName = FileUtil.getExtension(in);
         if (StringUtils.isBlank(fileExtName)) {
-            throw new FilePreviewException(ErrorCodeEnum.ERROR.getCode(), "解析文件扩展名地址失败");
+            throw new FilePreviewException(ErrorCodeEnum.ERROR.getCode(), "解析文件扩展名失败");
         }
         try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             try {
                 final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(fileExtName.toUpperCase());
                 if (!Objects.isNull(documentFormatEnum)) {
-                    officeConvert.convert(in, bos, fileExtName);
+//                    officeConvert.convert(in, bos, fileExtName);
                 }
             } catch (IllegalArgumentException e) {
                 bos.reset();
