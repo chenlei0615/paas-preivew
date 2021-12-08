@@ -21,7 +21,7 @@ logging:
 
 jodconverter:
   local:
-    enabled: false
+    enabled: true
     # 设置LibreOffice主目录
     office-home: D:/software/libreoffice
     # 开启多个LibreOffice进程，每个端口对应一个进程
