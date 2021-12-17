@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,9 +37,9 @@ public class PreviewController {
     @ApiOperation("通过文件上传预览")
     @PostMapping("/preview")
     public void preview(MultipartFile file, HttpServletResponse response) throws Exception {
+        Assert.isTrue(!file.isEmpty(), "文件不能为空");
         log.info(">>> file.getName()：【{}】，file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getName(), file.getOriginalFilename(), file.getSize());
         final String fileSuffix = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
-
         try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             try {
                 final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(fileSuffix.toUpperCase());
