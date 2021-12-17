@@ -37,7 +37,7 @@ public class PreviewController {
     @ApiOperation("通过文件上传预览")
     @PostMapping("/preview")
     public void preview(MultipartFile file, HttpServletResponse response) throws Exception {
-        Assert.isTrue(!file.isEmpty(), "文件不能为空");
+        Assert.isTrue(Objects.nonNull(file) && !file.isEmpty(), "文件不存在或文件为空");
         log.info(">>> file.getName()：【{}】，file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getName(), file.getOriginalFilename(), file.getSize());
         final String fileSuffix = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
         try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
