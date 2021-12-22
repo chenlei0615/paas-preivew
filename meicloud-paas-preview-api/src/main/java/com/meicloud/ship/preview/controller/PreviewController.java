@@ -55,8 +55,6 @@ public class PreviewController {
         Assert.isTrue(StringUtils.isNotBlank(fileUrl), "请传入文件url地址");
         InputStream in = FileUtil.getInputStreamByUrl(fileUrl);
         Assert.notNull(FileUtil.getInputStreamByUrl(fileUrl), "解析url地址失败");
-        String fileExtName = FileUtil.getExtension(in);
-        Assert.isTrue(StringUtils.isNotBlank(fileExtName), "解析文件扩展名失败");
         String fileName = fileUrl.trim().substring(fileUrl.lastIndexOf("/") + 1);
         String targetFilename = String.format("%s%s", FilenameUtils.getBaseName(fileName), ExtensionConstant.PDF_EXTENSION);
         ByteArrayOutputStream bos = this.streamConverter.doConvert(in, fileName, targetFilename);
