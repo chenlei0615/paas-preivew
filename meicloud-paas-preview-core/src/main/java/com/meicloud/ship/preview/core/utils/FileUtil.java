@@ -10,7 +10,9 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -33,7 +35,7 @@ public class FileUtil {
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
             IOUtils.copy(conn.getInputStream(), output);
             return new ByteArrayInputStream(output.toByteArray());
-        } catch ( Exception e) {
+        } catch (Exception e) {
             log.error("解析url地址报错: {}", e.getMessage());
         } finally {
             if (conn != null) {
@@ -58,7 +60,7 @@ public class FileUtil {
         Metadata metadata = new Metadata();
         metadata.add(TikaMetadataKeys.RESOURCE_NAME_KEY, contentType);
         parser.parse(inputStream, new DefaultHandler(), metadata, new ParseContext());
-        inputStream.close();
+//        inputStream.close();
         String mime = metadata.get(HttpHeaders.CONTENT_TYPE);
         String extType = checkType(mime);
         return extType;

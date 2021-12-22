@@ -44,7 +44,7 @@ public enum DocumentFormatEnum {
 
         @Override
         public DocumentFormat getTargetFormat() {
-            return DefaultDocumentFormatRegistry.HTML;
+            return DefaultDocumentFormatRegistry.PDF;
         }
     },
     XLSX {
@@ -55,7 +55,7 @@ public enum DocumentFormatEnum {
 
         @Override
         public DocumentFormat getTargetFormat() {
-            return DefaultDocumentFormatRegistry.HTML;
+            return DefaultDocumentFormatRegistry.PDF;
         }
     },
     TXT {

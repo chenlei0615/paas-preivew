@@ -11,8 +11,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
+
 swagger:
   enable: true
 
@@ -23,10 +22,12 @@ jodconverter:
   local:
     enabled: true
     # 设置LibreOffice主目录
-    office-home: /usr/lib64/libreoffice
+    #    office-home: /usr/lib64/libreoffice
+    office-home: D:\software\libreoffice
     # 开启多个LibreOffice进程，每个端口对应一个进程
     port-numbers: 8100,8101,8102
     # LibreOffice进程重启前的最大进程数
     max-tasks-per-process: 100
     taskExecutionTimeoutMinutes: 5
     taskQueueTimeoutHours: 1
+    kill-existing-process: true
