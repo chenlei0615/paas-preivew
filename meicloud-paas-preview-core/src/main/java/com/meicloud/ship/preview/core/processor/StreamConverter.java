@@ -1,6 +1,7 @@
 package com.meicloud.ship.preview.core.processor;
 
 import com.meicloud.ship.preview.core.common.ExtensionConstant;
+import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.jodconverter.core.DocumentConverter;
@@ -88,6 +89,9 @@ public class StreamConverter {
     private ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName, String targetFileName,
                                           ByteArrayOutputStream byteArrayOutputStream) throws OfficeException, IOException {
         final DocumentFormat sourceFormat = DefaultDocumentFormatRegistry.getFormatByExtension(FilenameUtils.getExtension(sourceFileName));
+        if (sourceFormat.getName().equals(DefaultDocumentFormatRegistry.TXT.getName())) {
+            inputStream = DocumentFormatEnum.TXT.getInputStream(inputStream);
+        }
         log.info(">>> 待转换的文档类型：{}", sourceFormat);
         final DocumentFormat targetFormat = DefaultDocumentFormatRegistry.getFormatByExtension(FilenameUtils.getExtension(targetFileName));
         log.info(">>> 转换的目标文档类型：{}", targetFormat);
