@@ -11,6 +11,8 @@ spring:
   servlet:
     multipart:
       enabled: true
+      max-file-size: 30MB
+      max-request-size: 100MB
 
 swagger:
   enable: true

@@ -1,8 +1,10 @@
 package com.meicloud.ship.preview.controller;
 
+import com.meicloud.ship.preview.core.common.ErrorCodeEnum;
 import com.meicloud.ship.preview.core.common.ExtensionConstant;
 import com.meicloud.ship.preview.core.common.HeaderGenerator;
 import com.meicloud.ship.preview.core.processor.StreamConverter;
+import com.meicloud.ship.preview.core.utils.AssertUtils;
 import com.meicloud.ship.preview.core.utils.FileUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,11 +40,15 @@ public class PreviewController {
     @ApiOperation("通过文件上传预览")
     @PostMapping("/preview")
     public ResponseEntity<byte[]> preview(MultipartFile file) throws Exception {
-        Assert.isTrue(Objects.nonNull(file) && !file.isEmpty(), "文件不存在或文件为空");
-        log.info(">>> file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getOriginalFilename(), file.getSize());
+        AssertUtils.isTrue(Objects.nonNull(file) && !file.isEmpty(), ErrorCodeEnum.FILE_NOT_EXIST);
+        log.info(" >>> file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getOriginalFilename(), file.getSize());
         String fileName = FilenameUtils.getBaseName(file.getOriginalFilename());
         String targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);
-        ByteArrayOutputStream convertedFile = this.streamConverter.doConvert(file.getInputStream(), file.getOriginalFilename(), targetFilename);
+        StopWatch clock = new StopWatch();
+        clock.start("文件上传：数据转化任务开始");
+        ByteArrayOutputStream convertedFile = this.streamConverter.convert(file.getInputStream(), file.getOriginalFilename(), targetFilename);
+        clock.stop();
+        log.info("文件上传：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
         final HttpHeaders headers = HeaderGenerator.pdfHeader(targetFilename);
         return ResponseEntity.ok().headers(headers).body(convertedFile.toByteArray());
     }
@@ -51,13 +57,17 @@ public class PreviewController {
     @ApiOperation("通过url地址预览")
     @GetMapping("/preview/link")
     public ResponseEntity<byte[]> previewByUrl(@RequestParam("url") String fileUrl) throws Exception {
-        log.info(">>> 预览文件地址：【{}】", fileUrl);
-        Assert.isTrue(StringUtils.isNotBlank(fileUrl), "请传入文件url地址");
+        log.info(" >>> 预览文件地址：【{}】", fileUrl);
+        AssertUtils.isTrue(StringUtils.isNotBlank(fileUrl), ErrorCodeEnum.FILE_URL_NOT_EXIST);
         InputStream in = FileUtil.getInputStreamByUrl(fileUrl);
-        Assert.notNull(FileUtil.getInputStreamByUrl(fileUrl), "解析url地址失败");
+        AssertUtils.notNull(FileUtil.getInputStreamByUrl(fileUrl), ErrorCodeEnum.PARSE_FILE_URL_FAILED);
+        StopWatch clock = new StopWatch();
+        clock.start("文件链接：数据转化任务开始");
         String fileName = fileUrl.trim().substring(fileUrl.lastIndexOf("/") + 1);
         String targetFilename = String.format("%s%s", FilenameUtils.getBaseName(fileName), ExtensionConstant.PDF_EXTENSION);
-        ByteArrayOutputStream bos = this.streamConverter.doConvert(in, fileName, targetFilename);
+        ByteArrayOutputStream bos = this.streamConverter.convert(in, fileName, targetFilename);
+        clock.stop();
+        log.info("文件链接：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
         final byte[] bytes = bos.toByteArray();
         final HttpHeaders headers = HeaderGenerator.pdfHeader(targetFilename);
         return ResponseEntity.ok().headers(headers).body(bytes);
