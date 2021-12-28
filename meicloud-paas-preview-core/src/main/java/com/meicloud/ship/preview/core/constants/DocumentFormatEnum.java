@@ -1,9 +1,11 @@
 package com.meicloud.ship.preview.core.constants;
 
+import com.meicloud.ship.preview.core.streams.ExcelStreamReader;
+import com.meicloud.ship.preview.core.streams.TxtStreamReader;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
 
-import java.io.*;
+import java.io.InputStream;
 
 /**
  * @author chenlei140
@@ -57,6 +59,12 @@ public enum DocumentFormatEnum {
         public DocumentFormat getTargetFormat() {
             return DefaultDocumentFormatRegistry.PDF;
         }
+
+        @Override
+        public InputStream getInputStream(InputStream inputStream) {
+            return ExcelStreamReader.getExcelStream(inputStream);
+        }
+
     },
     TXT {
         @Override
@@ -66,20 +74,7 @@ public enum DocumentFormatEnum {
 
         @Override
         public InputStream getInputStream(InputStream inputStream) {
-            //因为会出现中文乱码问题，所以先通过字符流进行编码转换，再转换成字节流
-            try (final BufferedReader bis = new BufferedReader(new InputStreamReader(inputStream, "GBK"))) {
-                StringBuilder buf = new StringBuilder();
-                String temp;
-                while ((temp = bis.readLine()) != null) {
-                    buf.append(temp).append(System.getProperty("line.separator"));
-                }
-                return new ByteArrayInputStream(buf.toString().getBytes());
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+            return TxtStreamReader.getExcelStream(inputStream);
         }
     };
 

@@ -1,11 +1,10 @@
-package com.meicloud.ship.preview.core.processor;
+package com.meicloud.ship.preview.core.streams;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,13 +20,17 @@ import java.util.Iterator;
  * @date 2021/12/21 17:03
  */
 @Slf4j
-@Component
 @Scope(value = "prototype")
 public class ExcelStreamReader {
+
+    private ExcelStreamReader() {
+    }
+
     private static final String TODAY = "TODAY()";
     public static final String MAC_TODAY = "May 6, 2000";
 
-    public InputStream getExcelStream(InputStream inputStream, ByteArrayOutputStream bos) {
+    public static InputStream getExcelStream(InputStream inputStream) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
             Iterator<Sheet> iterator = workbook.sheetIterator();
             while (iterator.hasNext()) {
@@ -47,7 +50,7 @@ public class ExcelStreamReader {
         return inputStream;
     }
 
-    private void disableComments(Sheet sheet) {
+    private static void disableComments(Sheet sheet) {
         if (sheet instanceof XSSFSheet || sheet instanceof HSSFSheet) {
             Iterator<Row> rowIterator = sheet.iterator();
             while (rowIterator.hasNext()) {

@@ -2,11 +2,11 @@ package com.meicloud.ship.preview.core.processor;
 
 import com.meicloud.ship.preview.core.common.ExtensionConstant;
 import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
+import com.meicloud.ship.preview.core.streams.ExcelStreamReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jodconverter.core.DocumentConverter;
-import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeManager;
@@ -34,9 +34,6 @@ public class StreamConverter {
     @Resource
     private OfficeManager officeManager;
 
-    @Resource
-    private ExcelStreamReader excelStreamReader;
-
     private DocumentConverter converter;
 
     private static volatile boolean isRDInitialized = false;
@@ -56,33 +53,44 @@ public class StreamConverter {
     /**
      * @param inputStream    => stream
      * @param sourceFileName => xyz.xls
-     * @param targetFileName => xyz.pdf
      */
-    public ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName, String targetFileName) throws OfficeException, IOException {
+    public ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        if (inputStream == null || StringUtils.isBlank(sourceFileName) || StringUtils.isBlank(targetFileName)) {
+        if (inputStream == null || StringUtils.isBlank(sourceFileName)) {
             throw new NullPointerException("File Process Failed Due To Null Value");
         } else {
             if (sourceFileName.contains(ExtensionConstant.XLS_EXTENSION) || sourceFileName.contains(ExtensionConstant.XLSX_EXTENSION)) {
-                inputStream = this.excelStreamReader.getExcelStream(inputStream, new ByteArrayOutputStream());
+                inputStream = ExcelStreamReader.getExcelStream(inputStream);
             }
             if (sourceFileName.contains(ExtensionConstant.TXT)) {
                 inputStream = DocumentFormatEnum.TXT.getInputStream(inputStream);
             }
-            return convert(inputStream, sourceFileName, targetFileName, outputStream);
+            return convert(inputStream, sourceFileName, outputStream);
         }
     }
 
-    private ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName, String targetFileName,
-                                          ByteArrayOutputStream byteArrayOutputStream) throws OfficeException, IOException {
-        final DocumentFormat sourceFormat = DefaultDocumentFormatRegistry.getFormatByExtension(FilenameUtils.getExtension(sourceFileName));
+    private ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName,
+                                          ByteArrayOutputStream byteArrayOutputStream) {
+        String suffix = FilenameUtils.getExtension(sourceFileName);
+        final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(suffix.toUpperCase());
 
+        final DocumentFormat sourceFormat = documentFormatEnum.getFormFormat();
         log.info(">>> 待转换的文档类型：{}", sourceFormat);
-        final DocumentFormat targetFormat = DefaultDocumentFormatRegistry.getFormatByExtension(FilenameUtils.getExtension(targetFileName));
+
+        final DocumentFormat targetFormat = documentFormatEnum.getTargetFormat();
         log.info(">>> 转换的目标文档类型：{}", targetFormat);
-        this.converter.convert(inputStream).as(sourceFormat).to(byteArrayOutputStream).as(targetFormat).execute();
-        if (inputStream != null) {
-            inputStream.close();
+        try {
+            this.converter.convert(inputStream).as(sourceFormat).to(byteArrayOutputStream).as(targetFormat).execute();
+        } catch (OfficeException e) {
+            log.error(" 流转化异常: {} ", e.getStackTrace());
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return byteArrayOutputStream;
     }

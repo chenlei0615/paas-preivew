@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
@@ -43,7 +44,7 @@ public class PreviewController {
 
     @ApiOperation("通过文件上传预览")
     @PostMapping("/preview")
-    public ResponseEntity<byte[]> preview(MultipartFile file) throws Exception {
+    public ResponseEntity<byte[]> preview(MultipartFile file) {
         AssertUtils.isTrue(Objects.nonNull(file) && !file.isEmpty(), ErrorCodeEnum.FILE_NOT_EXIST);
         AssertUtils.isTrue(file.getSize() / 1024 / 1024 < maxSize, ErrorCodeEnum.FILE_OVERSIZE);
         log.info(" >>> file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getOriginalFilename(), file.getSize());
@@ -51,7 +52,12 @@ public class PreviewController {
         String targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);
         StopWatch clock = new StopWatch();
         clock.start("文件上传：数据转化任务开始");
-        ByteArrayOutputStream convertedFile = this.streamConverter.convert(file.getInputStream(), file.getOriginalFilename(), targetFilename);
+        ByteArrayOutputStream convertedFile = null;
+        try {
+            convertedFile = this.streamConverter.convert(file.getInputStream(), file.getOriginalFilename());
+        } catch (IOException e) {
+            log.error(" 文件上传： 获取文件输入流异常 {}", e.getStackTrace());
+        }
         clock.stop();
         log.info("文件上传：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
         final HttpHeaders headers = HeaderGenerator.pdfHeader(targetFilename);
@@ -61,7 +67,7 @@ public class PreviewController {
 
     @ApiOperation("通过url地址预览")
     @GetMapping("/preview/link")
-    public ResponseEntity<byte[]> previewByUrl(@RequestParam("url") String fileUrl) throws Exception {
+    public ResponseEntity<byte[]> previewByUrl(@RequestParam("url") String fileUrl) {
         log.info(" >>> 预览文件地址：【{}】", fileUrl);
         AssertUtils.isTrue(StringUtils.isNotBlank(fileUrl), ErrorCodeEnum.FILE_URL_NOT_EXIST);
         InputStream in = FileUtil.getInputStreamByUrl(fileUrl);
@@ -70,7 +76,7 @@ public class PreviewController {
         clock.start("文件链接：数据转化任务开始");
         String fileName = fileUrl.trim().substring(fileUrl.lastIndexOf("/") + 1);
         String targetFilename = String.format("%s%s", FilenameUtils.getBaseName(fileName), ExtensionConstant.PDF_EXTENSION);
-        ByteArrayOutputStream bos = this.streamConverter.convert(in, fileName, targetFilename);
+        ByteArrayOutputStream bos = this.streamConverter.convert(in, fileName);
         clock.stop();
         log.info("文件链接：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
         final byte[] bytes = bos.toByteArray();
