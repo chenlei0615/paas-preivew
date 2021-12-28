@@ -6,3 +6,24 @@ spring:
     active: prod
   application:
     name: meicloud-paas-preview
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: html5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+swagger:
+  enable: true
+
+logging:
+  config: classpath:log4j2.xml

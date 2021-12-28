@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
@@ -37,10 +38,14 @@ public class PreviewController {
 
     private final StreamConverter streamConverter;
 
+    @Value("${preview.max-file-size}")
+    private Integer maxSize;
+
     @ApiOperation("通过文件上传预览")
     @PostMapping("/preview")
     public ResponseEntity<byte[]> preview(MultipartFile file) throws Exception {
         AssertUtils.isTrue(Objects.nonNull(file) && !file.isEmpty(), ErrorCodeEnum.FILE_NOT_EXIST);
+        AssertUtils.isTrue(file.getSize() / 1024 / 1024 < maxSize, ErrorCodeEnum.FILE_OVERSIZE);
         log.info(" >>> file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getOriginalFilename(), file.getSize());
         String fileName = FilenameUtils.getBaseName(file.getOriginalFilename());
         String targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);

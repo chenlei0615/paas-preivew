@@ -4,6 +4,7 @@ import com.meicloud.ship.preview.core.common.ExtensionConstant;
 import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jodconverter.core.DocumentConverter;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
@@ -59,8 +60,8 @@ public class StreamConverter {
      */
     public ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName, String targetFileName) throws OfficeException, IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        if (inputStream == null || (sourceFileName == null || sourceFileName.equals("")) || (targetFileName == null || targetFileName.equals(""))) {
-            throw new NullPointerException("File Process File Due To Null Value");
+        if (inputStream == null || StringUtils.isBlank(sourceFileName) || StringUtils.isBlank(targetFileName)) {
+            throw new NullPointerException("File Process Failed Due To Null Value");
         } else {
             if (sourceFileName.contains(ExtensionConstant.XLS_EXTENSION) || sourceFileName.contains(ExtensionConstant.XLSX_EXTENSION)) {
                 inputStream = this.excelStreamReader.getExcelStream(inputStream, new ByteArrayOutputStream());

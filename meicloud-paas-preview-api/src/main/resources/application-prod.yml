@@ -1,35 +1,16 @@
-spring:
-  thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
-    mode: html5
-    encoding: UTF-8
-    servlet:
-      content-type: text/html
-    cache: false
-
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 30MB
-      max-request-size: 100MB
-
-swagger:
-  enable: true
-
-logging:
-  config: classpath:log4j2.xml
+preview:
+  max-file-size: 30
 
 jodconverter:
   local:
     enabled: true
     # 设置LibreOffice主目录
-    office-home: /usr/lib64/libreoffice
-    #    office-home: D:\software\libreoffice
-    # 开启多个LibreOffice进程，每个端口对应一个进程
-    port-numbers: 8100,8101,8102
-    # LibreOffice进程重启前的最大进程数
-    max-tasks-per-process: 100
-    taskExecutionTimeoutMinutes: 5
-    taskQueueTimeoutHours: 1
+    office-home: @pom.office.home@
+    port-numbers: 8100
+    max-tasks-per-process: 20
+    task-execution-timeout: 140000
+    task-queue-timeout: 90000
     kill-existing-process: true
+    process-timeout: 180000
+    process-retry-interval: 1000
+    working-dir: @pom.jodconverter.dir@

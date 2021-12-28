@@ -29,18 +29,20 @@
 
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>local</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <pom.office.home>D:/software/libreoffice/</pom.office.home>
+                <pom.office.home>D:/software/libreoffice</pom.office.home>
+                <pom.jodconverter.dir>E:/temp</pom.jodconverter.dir>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <pom.office.home>/opt/libreoffice</pom.office.home>
+                <pom.office.home>/usr/lib64/libreoffice</pom.office.home>
+                <pom.jodconverter.dir>/temp</pom.jodconverter.dir>
             </properties>
         </profile>
     </profiles>
