@@ -14,11 +14,12 @@ import java.io.*;
 @Slf4j
 @Scope(value = "prototype")
 public class TxtStreamReader {
+    
     private TxtStreamReader() {
 
     }
 
-    public static InputStream getExcelStream(InputStream inputStream) {
+    public static InputStream getInputStream(InputStream inputStream) {
         //因为会出现中文乱码问题，所以先通过字符流进行编码转换，再转换成字节流
         try (final BufferedReader bis = new BufferedReader(new InputStreamReader(inputStream, "GBK"))) {
             StringBuilder buf = new StringBuilder();

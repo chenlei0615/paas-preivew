@@ -48,6 +48,11 @@ public enum DocumentFormatEnum {
         public DocumentFormat getTargetFormat() {
             return DefaultDocumentFormatRegistry.PDF;
         }
+
+        @Override
+        public InputStream getInputStream(InputStream inputStream) {
+            return ExcelStreamReader.getInputStream(inputStream);
+        }
     },
     XLSX {
         @Override
@@ -62,10 +67,11 @@ public enum DocumentFormatEnum {
 
         @Override
         public InputStream getInputStream(InputStream inputStream) {
-            return ExcelStreamReader.getExcelStream(inputStream);
+            return ExcelStreamReader.getInputStream(inputStream);
         }
 
     },
+
     TXT {
         @Override
         public DocumentFormat getFormFormat() {
@@ -74,7 +80,19 @@ public enum DocumentFormatEnum {
 
         @Override
         public InputStream getInputStream(InputStream inputStream) {
-            return TxtStreamReader.getExcelStream(inputStream);
+            return TxtStreamReader.getInputStream(inputStream);
+        }
+    },
+
+    CSV {
+        @Override
+        public DocumentFormat getFormFormat() {
+            return DefaultDocumentFormatRegistry.CSV;
+        }
+
+        @Override
+        public InputStream getInputStream(InputStream inputStream) {
+            return ExcelStreamReader.getInputStream(inputStream);
         }
     };
 

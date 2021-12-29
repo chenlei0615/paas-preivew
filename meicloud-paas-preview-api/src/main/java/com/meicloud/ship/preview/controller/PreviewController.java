@@ -47,7 +47,7 @@ public class PreviewController {
     public ResponseEntity<byte[]> preview(MultipartFile file) {
         AssertUtils.isTrue(Objects.nonNull(file) && !file.isEmpty(), ErrorCodeEnum.FILE_NOT_EXIST);
         AssertUtils.isTrue(file.getSize() / 1024 / 1024 < maxSize, ErrorCodeEnum.FILE_OVERSIZE);
-        log.info(" >>> file.getOriginalFilename()：【{}】，file.getSize()：【{}】", file.getOriginalFilename(), file.getSize());
+        log.info(" >>> 文件名 ：【{}】，文件大小 ：【{}】", file.getOriginalFilename(), file.getSize());
         String fileName = FilenameUtils.getBaseName(file.getOriginalFilename());
         String targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);
         StopWatch clock = new StopWatch();
@@ -59,7 +59,7 @@ public class PreviewController {
             log.error(" 文件上传： 获取文件输入流异常 {}", e.getStackTrace());
         }
         clock.stop();
-        log.info("文件上传：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
+        log.info(" 文件上传：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
         final HttpHeaders headers = HeaderGenerator.pdfHeader(targetFilename);
         return ResponseEntity.ok().headers(headers).body(convertedFile.toByteArray());
     }
@@ -70,13 +70,13 @@ public class PreviewController {
     public ResponseEntity<byte[]> previewByUrl(@RequestParam("url") String fileUrl) {
         log.info(" >>> 预览文件地址：【{}】", fileUrl);
         AssertUtils.isTrue(StringUtils.isNotBlank(fileUrl), ErrorCodeEnum.FILE_URL_NOT_EXIST);
-        InputStream in = FileUtil.getInputStreamByUrl(fileUrl);
+        InputStream inputStream = FileUtil.getInputStreamByUrl(fileUrl);
         AssertUtils.notNull(FileUtil.getInputStreamByUrl(fileUrl), ErrorCodeEnum.PARSE_FILE_URL_FAILED);
         StopWatch clock = new StopWatch();
         clock.start("文件链接：数据转化任务开始");
         String fileName = fileUrl.trim().substring(fileUrl.lastIndexOf("/") + 1);
         String targetFilename = String.format("%s%s", FilenameUtils.getBaseName(fileName), ExtensionConstant.PDF_EXTENSION);
-        ByteArrayOutputStream bos = this.streamConverter.convert(in, fileName);
+        ByteArrayOutputStream bos = this.streamConverter.convert(inputStream, fileName);
         clock.stop();
         log.info("文件链接：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
         final byte[] bytes = bos.toByteArray();

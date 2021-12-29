@@ -29,7 +29,7 @@ public class ExcelStreamReader {
     private static final String TODAY = "TODAY()";
     public static final String MAC_TODAY = "May 6, 2000";
 
-    public static InputStream getExcelStream(InputStream inputStream) {
+    public static InputStream getInputStream(InputStream inputStream) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
             Iterator<Sheet> iterator = workbook.sheetIterator();

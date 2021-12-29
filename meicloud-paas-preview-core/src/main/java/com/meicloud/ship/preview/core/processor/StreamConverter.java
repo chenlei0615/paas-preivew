@@ -1,12 +1,11 @@
 package com.meicloud.ship.preview.core.processor;
 
-import com.meicloud.ship.preview.core.common.ExtensionConstant;
 import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
-import com.meicloud.ship.preview.core.streams.ExcelStreamReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jodconverter.core.DocumentConverter;
+import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeManager;
@@ -19,6 +18,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * @author chenlei140
@@ -58,42 +58,63 @@ public class StreamConverter {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         if (inputStream == null || StringUtils.isBlank(sourceFileName)) {
             throw new NullPointerException("File Process Failed Due To Null Value");
-        } else {
-            if (sourceFileName.contains(ExtensionConstant.XLS_EXTENSION) || sourceFileName.contains(ExtensionConstant.XLSX_EXTENSION)) {
-                inputStream = ExcelStreamReader.getExcelStream(inputStream);
-            }
-            if (sourceFileName.contains(ExtensionConstant.TXT)) {
-                inputStream = DocumentFormatEnum.TXT.getInputStream(inputStream);
-            }
-            return convert(inputStream, sourceFileName, outputStream);
         }
+        return convert(inputStream, sourceFileName, outputStream);
     }
 
+    /**
+     * @param inputStream
+     * @param sourceFileName
+     * @param byteArrayOutputStream
+     * @return
+     */
     private ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName,
                                           ByteArrayOutputStream byteArrayOutputStream) {
-        String suffix = FilenameUtils.getExtension(sourceFileName);
+        final String suffix = FilenameUtils.getExtension(sourceFileName);
         final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(suffix.toUpperCase());
+        DocumentFormat sourceFormat;
+        DocumentFormat targetFormat;
+        if (Objects.isNull(documentFormatEnum)) {
+            sourceFormat = DefaultDocumentFormatRegistry.getFormatByExtension(suffix);
+            // default pdf
+            targetFormat = DefaultDocumentFormatRegistry.PDF;
+        } else {
+            sourceFormat = documentFormatEnum.getFormFormat();
+            targetFormat = documentFormatEnum.getTargetFormat();
+            inputStream = documentFormatEnum.getInputStream(inputStream);
+        }
+        return convert(inputStream, sourceFormat, targetFormat, byteArrayOutputStream);
+    }
 
-        final DocumentFormat sourceFormat = documentFormatEnum.getFormFormat();
-        log.info(">>> 待转换的文档类型：{}", sourceFormat);
 
-        final DocumentFormat targetFormat = documentFormatEnum.getTargetFormat();
-        log.info(">>> 转换的目标文档类型：{}", targetFormat);
+    /**
+     * @param inputStream
+     * @param sourceFormat
+     * @param targetFormat
+     * @param byteArrayOutputStream
+     * @return
+     */
+    private ByteArrayOutputStream convert(InputStream inputStream, DocumentFormat sourceFormat, DocumentFormat targetFormat,
+                                          ByteArrayOutputStream byteArrayOutputStream) {
+        log.info("  \n   >>> 待转换的文档类型：【{}】   \n   >>> 转换的目标文档类型：【{}】 ", sourceFormat, targetFormat);
         try {
             this.converter.convert(inputStream).as(sourceFormat).to(byteArrayOutputStream).as(targetFormat).execute();
         } catch (OfficeException e) {
-            log.error(" 流转化异常: {} ", e.getStackTrace());
+            log.error(" 转化流异常: {} ", e.getStackTrace());
         } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            releaseInputStream(inputStream);
         }
         return byteArrayOutputStream;
     }
 
 
+    private void releaseInputStream(InputStream inputStream) {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                log.error(" 流关闭异常: {} ", e.getStackTrace());
+            }
+        }
+    }
 }
