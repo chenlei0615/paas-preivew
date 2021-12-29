@@ -1,5 +1,6 @@
 package com.meicloud.ship.preview.config;
 
+import com.meicloud.ship.preview.core.common.ErrorCodeEnum;
 import com.meicloud.ship.preview.core.common.RestResult;
 import com.meicloud.ship.preview.core.exception.FilePreviewException;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,12 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestResult handleException(Exception e) {
         return new RestResult(false, ((FilePreviewException) e).getException(), null);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public RestResult argumentException(Exception e) {
+        return new RestResult(false, ErrorCodeEnum.ILLEGAL_ARGUMENT, null);
     }
 
 }

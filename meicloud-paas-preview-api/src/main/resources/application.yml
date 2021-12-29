@@ -15,6 +15,9 @@ spring:
     servlet:
       content-type: text/html
     cache: false
+    
+  jackson:
+    time-zone: Asia/Shanghai
 
   servlet:
     multipart:
