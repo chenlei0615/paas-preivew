@@ -14,3 +14,5 @@ jodconverter:
     process-timeout: 180000
     process-retry-interval: 1000
     working-dir: @pom.jodconverter.dir@
+  store:
+    path: /convertedfile

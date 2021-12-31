@@ -1,7 +1,10 @@
 package com.meicloud.ship.preview.core.processor;
 
+import com.meicloud.ship.preview.core.common.ExtensionConstant;
 import com.meicloud.ship.preview.core.constants.DocumentFormatEnum;
+import com.meicloud.ship.preview.core.utils.HtmlParseUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jodconverter.core.DocumentConverter;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -54,12 +58,12 @@ public class StreamConverter {
      * @param inputStream    => stream
      * @param sourceFileName => xyz.xls
      */
-    public ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName) {
+    public byte[] convert(InputStream inputStream, String sourceFileName, String storePath) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         if (inputStream == null || StringUtils.isBlank(sourceFileName)) {
             throw new NullPointerException("File Process Failed Due To Null Value");
         }
-        return convert(inputStream, sourceFileName, outputStream);
+        return convert(inputStream, sourceFileName, outputStream, storePath);
     }
 
     /**
@@ -68,8 +72,8 @@ public class StreamConverter {
      * @param byteArrayOutputStream
      * @return
      */
-    private ByteArrayOutputStream convert(InputStream inputStream, String sourceFileName,
-                                          ByteArrayOutputStream byteArrayOutputStream) {
+    private byte[] convert(InputStream inputStream, String sourceFileName,
+                           ByteArrayOutputStream byteArrayOutputStream, String storePath) {
         final String suffix = FilenameUtils.getExtension(sourceFileName);
         final DocumentFormatEnum documentFormatEnum = DocumentFormatEnum.valueOf(suffix.toUpperCase());
         DocumentFormat sourceFormat;
@@ -83,9 +87,43 @@ public class StreamConverter {
             targetFormat = documentFormatEnum.getTargetFormat();
             inputStream = documentFormatEnum.getInputStream(inputStream);
         }
-        return convert(inputStream, sourceFormat, targetFormat, byteArrayOutputStream);
+        if (ExtensionConstant.XLS.equals(suffix) || ExtensionConstant.XLSX.equals(suffix)) {
+            String fileName = FilenameUtils.getBaseName(sourceFileName);
+            File targetFile = new File(storePath + "/" + fileName + ExtensionConstant.HTML_EXTENSION);
+            return convert(inputStream, sourceFormat, targetFormat, targetFile, storePath);
+        } else {
+            return convert(inputStream, sourceFormat, targetFormat, byteArrayOutputStream);
+        }
     }
 
+    /**
+     * @param inputStream
+     * @param sourceFormat
+     * @param targetFormat
+     * @return byte[]
+     */
+    private byte[] convert(InputStream inputStream, DocumentFormat sourceFormat,
+                           DocumentFormat targetFormat, File targetFile, String storePath) {
+        log.info("  \n   >>> 待转换的文档类型：【{}】   \n   >>> 转换的目标文档类型：【{}】 ", sourceFormat, targetFormat);
+
+        byte[] bytes = new byte[]{};
+        try {
+            this.converter.convert(inputStream).as(sourceFormat).to(targetFile).as(targetFormat).execute();
+            String editHtml = HtmlParseUtil.editHtml(targetFile, storePath);
+            if (StringUtils.isEmpty(editHtml)) {
+                bytes = FileUtils.readFileToByteArray(targetFile);
+            } else {
+                bytes = editHtml.getBytes("GB2312");
+            }
+        } catch (OfficeException e) {
+            log.error(" 转化流异常: {} ", e.getStackTrace());
+        } catch (IOException ex) {
+            log.error(" read File error: {} ", ex.getStackTrace());
+        } finally {
+            releaseInputStream(inputStream);
+        }
+        return bytes;
+    }
 
     /**
      * @param inputStream
@@ -94,8 +132,8 @@ public class StreamConverter {
      * @param byteArrayOutputStream
      * @return
      */
-    private ByteArrayOutputStream convert(InputStream inputStream, DocumentFormat sourceFormat, DocumentFormat targetFormat,
-                                          ByteArrayOutputStream byteArrayOutputStream) {
+    private byte[] convert(InputStream inputStream, DocumentFormat sourceFormat, DocumentFormat targetFormat,
+                           ByteArrayOutputStream byteArrayOutputStream) {
         log.info("  \n   >>> 待转换的文档类型：【{}】   \n   >>> 转换的目标文档类型：【{}】 ", sourceFormat, targetFormat);
         try {
             this.converter.convert(inputStream).as(sourceFormat).to(byteArrayOutputStream).as(targetFormat).execute();
@@ -104,7 +142,7 @@ public class StreamConverter {
         } finally {
             releaseInputStream(inputStream);
         }
-        return byteArrayOutputStream;
+        return byteArrayOutputStream.toByteArray();
     }
 
 

@@ -46,7 +46,7 @@ public enum DocumentFormatEnum {
 
         @Override
         public DocumentFormat getTargetFormat() {
-            return DefaultDocumentFormatRegistry.PDF;
+            return DefaultDocumentFormatRegistry.HTML;
         }
 
         @Override
@@ -62,7 +62,7 @@ public enum DocumentFormatEnum {
 
         @Override
         public DocumentFormat getTargetFormat() {
-            return DefaultDocumentFormatRegistry.PDF;
+            return DefaultDocumentFormatRegistry.HTML;
         }
 
         @Override

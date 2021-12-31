@@ -19,7 +19,6 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -42,6 +41,9 @@ public class PreviewController {
     @Value("${preview.max-file-size}")
     private Integer maxSize;
 
+    @Value("${jodconverter.store.path}")
+    private String storePath;
+
     @ApiOperation("通过文件上传预览")
     @PostMapping("/preview")
     public ResponseEntity<byte[]> preview(MultipartFile file) {
@@ -49,19 +51,31 @@ public class PreviewController {
         AssertUtils.isTrue(file.getSize() / 1024 / 1024 < maxSize, ErrorCodeEnum.FILE_OVERSIZE);
         log.info(" >>> 文件名 ：【{}】，文件大小 ：【{}】", file.getOriginalFilename(), file.getSize());
         String fileName = FilenameUtils.getBaseName(file.getOriginalFilename());
-        String targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);
+        String fileSuffix = FilenameUtils.getExtension(file.getOriginalFilename());
+        String targetFilename;
+        if (ExtensionConstant.XLS.equalsIgnoreCase(fileSuffix) ||
+                ExtensionConstant.XLSX.equalsIgnoreCase(fileSuffix)) {
+            targetFilename = String.format("%s%s", fileName, ExtensionConstant.HTML_EXTENSION);
+        } else {
+            targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);
+        }
         StopWatch clock = new StopWatch();
         clock.start("文件上传：数据转化任务开始");
-        ByteArrayOutputStream convertedFile = null;
+        byte[] convertedFileBytes = new byte[]{};
         try {
-            convertedFile = this.streamConverter.convert(file.getInputStream(), file.getOriginalFilename());
+            convertedFileBytes = this.streamConverter.convert(file.getInputStream(), file.getOriginalFilename(), storePath);
         } catch (IOException e) {
             log.error(" 文件上传： 获取文件输入流异常 {}", e.getStackTrace());
         }
         clock.stop();
         log.info(" 文件上传：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
-        final HttpHeaders headers = HeaderGenerator.pdfHeader(targetFilename);
-        return ResponseEntity.ok().headers(headers).body(convertedFile.toByteArray());
+        final HttpHeaders headers;
+        if (ExtensionConstant.HTML.equals(StringUtils.substringAfterLast(targetFilename, "."))) {
+            headers = HeaderGenerator.htmlHeader(targetFilename);
+        } else {
+            headers = HeaderGenerator.pdfHeader(targetFilename);
+        }
+        return ResponseEntity.ok().headers(headers).body(convertedFileBytes);
     }
 
 
@@ -75,14 +89,23 @@ public class PreviewController {
         StopWatch clock = new StopWatch();
         clock.start("文件链接：数据转化任务开始");
         String fileName = fileUrl.trim().substring(fileUrl.lastIndexOf("/") + 1);
-        String targetFilename = String.format("%s%s", FilenameUtils.getBaseName(fileName), ExtensionConstant.PDF_EXTENSION);
-        ByteArrayOutputStream bos = this.streamConverter.convert(inputStream, fileName);
+        String fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1 );
+        String targetFilename;
+        if (ExtensionConstant.XLS.equalsIgnoreCase(fileSuffix) ||
+                ExtensionConstant.XLSX.equalsIgnoreCase(fileSuffix)) {
+            targetFilename = String.format("%s%s", fileName, ExtensionConstant.HTML_EXTENSION);
+        } else {
+            targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);
+        }
+        byte[] convertedFileBytes = this.streamConverter.convert(inputStream, fileName, storePath);
         clock.stop();
         log.info("文件链接：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
-        final byte[] bytes = bos.toByteArray();
-        final HttpHeaders headers = HeaderGenerator.pdfHeader(targetFilename);
-        return ResponseEntity.ok().headers(headers).body(bytes);
+        final HttpHeaders headers;
+        if (ExtensionConstant.HTML.equals(StringUtils.substringAfterLast(targetFilename, "."))) {
+            headers = HeaderGenerator.htmlHeader(targetFilename);
+        } else {
+            headers = HeaderGenerator.pdfHeader(targetFilename);
+        }
+        return ResponseEntity.ok().headers(headers).body(convertedFileBytes);
     }
-
-
 }

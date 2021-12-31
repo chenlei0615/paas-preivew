@@ -20,4 +20,11 @@ public class HeaderGenerator {
         headers.setContentType(MediaType.valueOf(MediaType.APPLICATION_PDF_VALUE));
         return headers;
     }
+    public static HttpHeaders htmlHeader(String fileName) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + fileName);
+        headers.setContentType(MediaType.valueOf(MediaType.TEXT_HTML_VALUE));
+        return headers;
+    }
+
 }
