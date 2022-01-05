@@ -89,7 +89,7 @@ public class StreamConverter {
             targetFormat = documentFormatEnum.getTargetFormat();
             inputStream = documentFormatEnum.getInputStream(inputStream);
         }
-        if (ExtensionConstant.contains(suffix, ExtensionConstant.XLS, ExtensionConstant.XLSX)) {
+        if (ExtensionConstant.include(suffix, ExtensionConstant.EXCEL_2_HTML)) {
             String fileName = FilenameUtils.getBaseName(sourceFileName);
             File targetFile = new File(storePath, fileName + ExtensionConstant.HTML_EXTENSION);
             return convert(inputStream, sourceFormat, targetFormat, targetFile, storePath);
