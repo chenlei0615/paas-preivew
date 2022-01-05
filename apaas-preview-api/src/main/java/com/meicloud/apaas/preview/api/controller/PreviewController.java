@@ -10,18 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.meicloud.apaas.preview.api.model.DataTranslator;
+import com.meicloud.apaas.preview.api.utils.InputStreamUtil;
 import com.meicloud.apaas.preview.core.common.ErrorCodeEnum;
-import com.meicloud.apaas.preview.core.common.ExtensionConstant;
-import com.meicloud.apaas.preview.core.common.HeaderGenerator;
 import com.meicloud.apaas.preview.core.processor.StreamConverter;
 import com.meicloud.apaas.preview.core.utils.AssertUtils;
-import com.meicloud.apaas.preview.core.utils.FileUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,9 +56,9 @@ public class PreviewController {
         AssertUtils.isTrue(Objects.nonNull(file) && !file.isEmpty(), ErrorCodeEnum.FILE_NOT_EXIST);
         AssertUtils.isTrue(file.getSize() / 1024 / 1024 < maxSize, ErrorCodeEnum.FILE_OVERSIZE);
         logger.info(" >>> 文件名 ：【{}】，文件大小 ：【{}】", file.getOriginalFilename(), file.getSize());
-        String fileName = FilenameUtils.getBaseName(file.getOriginalFilename());
-        String fileSuffix = FilenameUtils.getExtension(file.getOriginalFilename());
-        String targetFilename = getTargetFilename(fileName, fileSuffix);
+        String sourceFileName = FilenameUtils.getBaseName(file.getOriginalFilename());
+        String sourceFileSuffix = FilenameUtils.getExtension(file.getOriginalFilename());
+        DataTranslator translator = new DataTranslator(sourceFileName, sourceFileSuffix);
         StopWatch clock = new StopWatch();
         clock.start("文件上传：数据转化任务开始");
         byte[] convertedFileBytes = new byte[] {};
@@ -71,8 +69,7 @@ public class PreviewController {
         }
         clock.stop();
         logger.info(" 文件上传：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
-        HttpHeaders headers = HeaderGenerator.headers(targetFilename);
-        return ResponseEntity.ok().headers(headers).body(convertedFileBytes);
+        return ResponseEntity.ok().headers(translator.getHttpHeader()).body(convertedFileBytes);
     }
 
     @ApiOperation("通过url地址预览")
@@ -80,28 +77,17 @@ public class PreviewController {
     public ResponseEntity<byte[]> previewByUrl(@RequestParam("url") String fileUrl) {
         logger.info(" >>> 预览文件地址：【{}】", fileUrl);
         AssertUtils.isTrue(StringUtils.isNotBlank(fileUrl), ErrorCodeEnum.FILE_URL_NOT_EXIST);
-        InputStream inputStream = FileUtil.getInputStreamByUrl(fileUrl);
-        AssertUtils.notNull(FileUtil.getInputStreamByUrl(fileUrl), ErrorCodeEnum.PARSE_FILE_URL_FAILED);
+        InputStream inputStream = InputStreamUtil.getInputStreamByUrl(fileUrl);
+        AssertUtils.notNull(InputStreamUtil.getInputStreamByUrl(fileUrl), ErrorCodeEnum.PARSE_FILE_URL_FAILED);
         StopWatch clock = new StopWatch();
         clock.start("文件链接：数据转化任务开始");
-        String fileName = fileUrl.trim().substring(fileUrl.lastIndexOf("/") + 1);
-        String fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-        String targetFilename = getTargetFilename(fileName, fileSuffix);
-        byte[] convertedFileBytes = streamConverter.convert(inputStream, fileName, storePath);
+        String sourceFileName = fileUrl.trim().substring(fileUrl.lastIndexOf("/") + 1);
+        String sourceFileSuffix = sourceFileName.substring(sourceFileName.lastIndexOf(".") + 1);
+        DataTranslator translator = new DataTranslator(sourceFileName, sourceFileSuffix);
+        byte[] convertedFileBytes = streamConverter.convert(inputStream, sourceFileName, storePath);
         clock.stop();
         logger.info("文件链接：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
-        HttpHeaders headers = HeaderGenerator.headers(targetFilename);
-        return ResponseEntity.ok().headers(headers).body(convertedFileBytes);
+        return ResponseEntity.ok().headers(translator.getHttpHeader()).body(convertedFileBytes);
     }
 
-    private String getTargetFilename(String fileName, String fileSuffix) {
-        String targetFilename;
-        if (ExtensionConstant.contains(fileSuffix, ExtensionConstant.XLS, ExtensionConstant.XLSX,
-            ExtensionConstant.CSV)) {
-            targetFilename = String.format("%s%s", fileName, ExtensionConstant.HTML_EXTENSION);
-        } else {
-            targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);
-        }
-        return targetFilename;
-    }
 }
