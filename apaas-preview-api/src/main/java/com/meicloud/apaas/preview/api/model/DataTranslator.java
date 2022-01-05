@@ -1,5 +1,6 @@
 package com.meicloud.apaas.preview.api.model;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,7 +14,7 @@ import com.meicloud.apaas.preview.core.common.ExtensionConstant;
  * @description 数据转化模型
  * @date 2022/1/5 15:50
  */
-@Scope(value = "prototype")
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DataTranslator {
     private final String sourceFileName;
     private final String sourceFileSuffix;
@@ -29,8 +30,7 @@ public class DataTranslator {
     }
 
     private void translate() {
-        if (ExtensionConstant.contains(sourceFileSuffix, ExtensionConstant.XLS, ExtensionConstant.XLSX,
-            ExtensionConstant.CSV)) {
+        if (ExtensionConstant.include(sourceFileSuffix, ExtensionConstant.EXCEL_2_HTML)) {
             targetFilename = String.format("%s%s", sourceFileName, ExtensionConstant.HTML_EXTENSION);
             httpHeader = HeaderGenerator.headers(targetFilename, MediaType.valueOf(MediaType.TEXT_HTML_VALUE));
         } else {

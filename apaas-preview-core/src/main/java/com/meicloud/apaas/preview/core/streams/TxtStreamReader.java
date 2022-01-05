@@ -4,6 +4,7 @@ import java.io.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 /**
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.Scope;
  * @description txt配置装配
  * @date 2021/12/23 10:11
  */
-@Scope(value = "prototype")
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TxtStreamReader {
 
     private static final Logger logger = LoggerFactory.getLogger(TxtStreamReader.class);

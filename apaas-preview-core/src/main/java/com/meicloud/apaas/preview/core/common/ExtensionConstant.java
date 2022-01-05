@@ -1,6 +1,7 @@
 package com.meicloud.apaas.preview.core.common;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author chenlei140
@@ -63,7 +64,16 @@ public interface ExtensionConstant {
     String HTML = "html";
     String HTML_EXTENSION = ".html";
 
-    static boolean contains(String fileSuffix, String... extentions) {
-        return Arrays.stream(extentions).anyMatch(s -> s.equals(fileSuffix));
+    ArrayList<String> EXCEL_2_HTML = new ArrayList<String>() {
+        private static final long serialVersionUID = -2199884530391710802L;
+        {
+            add(XLS);
+            add(XLSX);
+            add(CSV);
+        }
+    };
+
+    static boolean include(String fileSuffix, List<String> extensions) {
+        return extensions.stream().anyMatch(s -> s.equals(fileSuffix));
     }
 }

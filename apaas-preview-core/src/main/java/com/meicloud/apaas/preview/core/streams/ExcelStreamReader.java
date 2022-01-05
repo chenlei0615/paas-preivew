@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 /**
@@ -19,7 +20,7 @@ import org.springframework.context.annotation.Scope;
  * @description excel 数据流特殊处理类
  * @date 2021/12/21 17:03
  */
-@Scope(value = "prototype")
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ExcelStreamReader {
 
     public static final String MAC_TODAY = "May 6, 2000";
