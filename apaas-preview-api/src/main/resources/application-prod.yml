@@ -1,0 +1,27 @@
+meicloud:
+  apaas:
+    preview:
+      max-file-size: 30
+      store-path: /convertedfile
+
+jodconverter:
+  local:
+    enabled: true
+    # 设置LibreOffice主目录
+    office-home: @pom.office.home@
+    port-numbers: 8100
+    max-tasks-per-process: 20
+    task-execution-timeout: 140000
+    task-queue-timeout: 90000
+    kill-existing-process: true
+    process-timeout: 180000
+    process-retry-interval: 1000
+    working-dir: @pom.jodconverter.dir@
+
+logging:
+  config: classpath:logback.xml
+  file:
+    max-size: 10MB
+    path: @pom.log.dir@
+  level:
+    root: info

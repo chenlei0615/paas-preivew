@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.meicloud.apaas</groupId>
+        <artifactId>apaas-preview</artifactId>
+        <version>1.0.0-RELEASE</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.meicloud.apaas</groupId>
+    <artifactId>apaas-preview-api</artifactId>
+    <version>1.0.0-RELEASE</version>
+    <name>apaas-preview-api</name>
+    <description>预览 api</description>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.meicloud.apaas</groupId>
+            <artifactId>apaas-preview-core</artifactId>
+            <version>1.0.0-RELEASE</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <pom.office.home>D:/software/libreoffice</pom.office.home>
+                <pom.jodconverter.dir>E:/temp</pom.jodconverter.dir>
+                <pom.log.dir>E:\apps\logs</pom.log.dir>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <pom.office.home>/usr/lib64/libreoffice</pom.office.home>
+                <pom.jodconverter.dir>/tmp</pom.jodconverter.dir>
+                <pom.log.dir>/apps/log</pom.log.dir>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.meicloud.apaas.preview.api.PreviewApiApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
