@@ -61,22 +61,19 @@
 
     <profiles>
         <profile>
-            <id>local</id>
+            <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <pom.office.home>D:/software/libreoffice</pom.office.home>
-                <pom.jodconverter.dir>E:/temp</pom.jodconverter.dir>
-                <pom.log.dir>E:\apps\logs</pom.log.dir>
+                <profile.active>dev</profile.active>
             </properties>
+
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <pom.office.home>/usr/lib64/libreoffice</pom.office.home>
-                <pom.jodconverter.dir>/tmp</pom.jodconverter.dir>
-                <pom.log.dir>/apps/log</pom.log.dir>
+                <profile.active>prod</profile.active>
             </properties>
         </profile>
     </profiles>

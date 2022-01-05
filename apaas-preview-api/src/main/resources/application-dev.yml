@@ -2,13 +2,13 @@ meicloud:
   apaas:
     preview:
       max-file-size: 30
-      store-path: /mnt
+      store-path: E:/convertedfile
 
 jodconverter:
   local:
     enabled: true
     # 设置LibreOffice主目录
-    office-home: /usr/lib64/libreoffice
+    office-home: D:/software/libreoffice
     port-numbers: 8100
     max-tasks-per-process: 20
     task-execution-timeout: 140000
@@ -16,11 +16,12 @@ jodconverter:
     kill-existing-process: true
     process-timeout: 180000
     process-retry-interval: 1000
-    working-dir: /tmp
+    working-dir: E:/temp
 
 logging:
   config: classpath:logback.xml
   file:
-    path: /apps/logs
+    max-size: 10MB
+    path: E:/apps/logs
   level:
     root: info
