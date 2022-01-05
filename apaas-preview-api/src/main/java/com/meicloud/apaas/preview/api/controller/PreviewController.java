@@ -96,7 +96,8 @@ public class PreviewController {
 
     private String getTargetFilename(String fileName, String fileSuffix) {
         String targetFilename;
-        if (ExtensionConstant.XLS.equalsIgnoreCase(fileSuffix) || ExtensionConstant.XLSX.equalsIgnoreCase(fileSuffix)) {
+        if (ExtensionConstant.contains(fileSuffix, ExtensionConstant.XLS, ExtensionConstant.XLSX,
+            ExtensionConstant.CSV)) {
             targetFilename = String.format("%s%s", fileName, ExtensionConstant.HTML_EXTENSION);
         } else {
             targetFilename = String.format("%s%s", fileName, ExtensionConstant.PDF_EXTENSION);

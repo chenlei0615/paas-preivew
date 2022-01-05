@@ -59,7 +59,7 @@ public class ExcelStreamReader {
                     Cell cell = cellIterator.next();
                     Comment comment = cell.getCellComment();
                     if (comment != null) {
-                        log.info("Comment :- " + comment.getString());
+                        log.info("Comment :-  {}", comment.getString());
                         cell.removeCellComment();
                     }
                     if (cell.getCellType() == CellType.FORMULA && cell.getCellFormula().equalsIgnoreCase(TODAY)) {

@@ -91,7 +91,7 @@ public class StreamConverter {
         }
         if (ExtensionConstant.XLS.equals(suffix) || ExtensionConstant.XLSX.equals(suffix)) {
             String fileName = FilenameUtils.getBaseName(sourceFileName);
-            File targetFile = new File(storePath + "/" + fileName + ExtensionConstant.HTML_EXTENSION);
+            File targetFile = new File(storePath, fileName + ExtensionConstant.HTML_EXTENSION);
             return convert(inputStream, sourceFormat, targetFormat, targetFile, storePath);
         } else {
             return convert(inputStream, sourceFormat, targetFormat, byteArrayOutputStream);

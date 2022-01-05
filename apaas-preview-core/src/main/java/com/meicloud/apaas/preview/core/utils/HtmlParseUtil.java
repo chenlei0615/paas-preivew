@@ -15,6 +15,8 @@ import org.springframework.util.CollectionUtils;
 public class HtmlParseUtil {
     private static final Logger log = LoggerFactory.getLogger(HtmlParseUtil.class);
 
+    private HtmlParseUtil() {}
+
     public static String editHtml(File targetFile, String storePath) {
         String html = "";
         try {

@@ -2,6 +2,8 @@ package com.meicloud.apaas.preview.core.streams;
 
 import java.io.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 
 /**
@@ -12,6 +14,8 @@ import org.springframework.context.annotation.Scope;
  */
 @Scope(value = "prototype")
 public class TxtStreamReader {
+
+    private static final Logger logger = LoggerFactory.getLogger(TxtStreamReader.class);
 
     private TxtStreamReader() {}
 
@@ -25,9 +29,9 @@ public class TxtStreamReader {
             }
             return new ByteArrayInputStream(buf.toString().getBytes());
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error(" 解码异常 : {} ", e.getStackTrace());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(" IO异常 : {} ", e.getStackTrace());
         }
         return null;
     }

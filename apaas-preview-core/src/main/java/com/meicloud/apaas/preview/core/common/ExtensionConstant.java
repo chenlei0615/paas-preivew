@@ -1,5 +1,7 @@
 package com.meicloud.apaas.preview.core.common;
 
+import java.util.Arrays;
+
 /**
  * @author chenlei140
  * @className ExtensionConstant
@@ -60,4 +62,8 @@ public interface ExtensionConstant {
     String ALL = "all";
     String HTML = "html";
     String HTML_EXTENSION = ".html";
+
+    static boolean contains(String fileSuffix, String... extentions) {
+        return Arrays.stream(extentions).anyMatch(s -> s.equals(fileSuffix));
+    }
 }

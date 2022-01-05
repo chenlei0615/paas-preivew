@@ -5,7 +5,6 @@ import java.io.InputStream;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
 
-import com.meicloud.apaas.preview.core.streams.ExcelStreamReader;
 import com.meicloud.apaas.preview.core.streams.TxtStreamReader;
 
 /**
@@ -50,10 +49,6 @@ public enum DocumentFormatEnum {
             return DefaultDocumentFormatRegistry.HTML;
         }
 
-        // @Override
-        // public InputStream getInputStream(InputStream inputStream) {
-        // return ExcelStreamReader.getInputStream(inputStream);
-        // }
     },
     XLSX {
         @Override
@@ -66,10 +61,6 @@ public enum DocumentFormatEnum {
             return DefaultDocumentFormatRegistry.HTML;
         }
 
-        // @Override
-        // public InputStream getInputStream(InputStream inputStream) {
-        // return ExcelStreamReader.getInputStream(inputStream);
-        // }
     },
 
     TXT {
@@ -92,7 +83,12 @@ public enum DocumentFormatEnum {
 
         @Override
         public InputStream getInputStream(InputStream inputStream) {
-            return ExcelStreamReader.getInputStream(inputStream);
+            return TxtStreamReader.getInputStream(inputStream);
+        }
+
+        @Override
+        public DocumentFormat getTargetFormat() {
+            return DefaultDocumentFormatRegistry.HTML;
         }
     };
 
