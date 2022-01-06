@@ -11,10 +11,14 @@ import org.springframework.http.MediaType;
  */
 public class HeaderGenerator {
 
-    private static final String FILE_SEPARATOR = ".";
-
     private HeaderGenerator() {}
 
+    /**
+     * 
+     * @param fileName
+     * @param mediaType
+     * @return
+     */
     public static HttpHeaders headers(String fileName, MediaType mediaType) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + fileName);

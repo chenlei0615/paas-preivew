@@ -48,10 +48,10 @@ public class StreamConverter {
     @PostConstruct
     public synchronized void init() {
         if (!isRDInitialized) {
-            logger.info(" >>>>>>>   OFFICE MANAGER START INIT ....");
+            logger.info(" \n    ------   OFFICE MANAGER START INIT  ------ ");
             converter = LocalConverter.builder().storeProperties(ExcelProperties.loadProperties())
                 .officeManager(officeManager).build();
-            logger.info(" >>>>>>>   OFFICE MANAGER INIT FINISHED ");
+            logger.info(" \n    ------   OFFICE MANAGER INIT FINISHED  ------ ");
             isRDInitialized = true;
         }
     }

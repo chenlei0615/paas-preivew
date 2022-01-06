@@ -1,9 +1,11 @@
 package com.meicloud.apaas.preview.api.model;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.meicloud.apaas.preview.api.config.HeaderGenerator;
 import com.meicloud.apaas.preview.core.common.ExtensionConstant;
@@ -16,15 +18,25 @@ import com.meicloud.apaas.preview.core.common.ExtensionConstant;
  */
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DataTranslator {
-    private final String sourceFileName;
-    private final String sourceFileSuffix;
+
+    private String sourceFileName;
+    private String sourceFileSuffix;
 
     private String targetFilename;
     private HttpHeaders httpHeader;
 
-    public DataTranslator(String sourceFileName, String sourceFileSuffix) {
-        this.sourceFileName = sourceFileName;
-        this.sourceFileSuffix = sourceFileSuffix;
+    private DataTranslator() {}
+
+    public DataTranslator(MultipartFile file) {
+        sourceFileName = FilenameUtils.getBaseName(file.getOriginalFilename());
+        sourceFileSuffix = FilenameUtils.getExtension(file.getOriginalFilename());
+
+        translate();
+    }
+
+    public DataTranslator(String url) {
+        sourceFileName = url.trim().substring(url.lastIndexOf("/") + 1);
+        sourceFileSuffix = sourceFileName.substring(sourceFileName.lastIndexOf(".") + 1);
 
         translate();
     }
@@ -43,15 +55,8 @@ public class DataTranslator {
         return targetFilename;
     }
 
-    public void setTargetFilename(String targetFilename) {
-        this.targetFilename = targetFilename;
-    }
-
     public HttpHeaders getHttpHeader() {
         return httpHeader;
     }
 
-    public void setHttpHeader(HttpHeaders httpHeader) {
-        this.httpHeader = httpHeader;
-    }
 }
