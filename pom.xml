@@ -10,14 +10,14 @@
 
     <groupId>com.meicloud.apaas</groupId>
     <artifactId>apaas-preview</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.1.0-RELEASE</version>
     <name>apaas-preview</name>
     <description>文档预览</description>
     <packaging>pom</packaging>
 
     <properties>
         <java.version>1.8</java.version>
-        <snapshot>1.0.0-RELEASE</snapshot>
+        <snapshot>1.1.0-RELEASE</snapshot>
     </properties>
 
     <modules>

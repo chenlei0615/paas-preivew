@@ -10,7 +10,7 @@ jodconverter:
     # 设置LibreOffice主目录
     office-home: /usr/lib64/libreoffice
     port-numbers: 8100
-    max-tasks-per-process: 20d
+    max-tasks-per-process: 20
     task-execution-timeout: 140000
     task-queue-timeout: 90000
     kill-existing-process: true

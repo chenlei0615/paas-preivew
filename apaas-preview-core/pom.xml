@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.meicloud.apaas</groupId>
         <artifactId>apaas-preview</artifactId>
-        <version>1.0.0-RELEASE</version>
+        <version>1.1.0-RELEASE</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>apaas-preview-core</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.1.0-RELEASE</version>
     <name>apaas-preview-core</name>
     <description>apaas-preview-core</description>
     <packaging>jar</packaging>

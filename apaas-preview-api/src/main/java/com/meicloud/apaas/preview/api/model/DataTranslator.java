@@ -55,6 +55,10 @@ public class DataTranslator {
         return targetFilename;
     }
 
+    public String getSourceFileName() {
+        return sourceFileName;
+    }
+
     public HttpHeaders getHttpHeader() {
         return httpHeader;
     }

@@ -70,7 +70,7 @@ public class PreviewController {
         StopWatch clock = new StopWatch();
         clock.start("文件链接：数据转化任务开始");
         DataTranslator translator = new DataTranslator(url);
-        byte[] convertedFileBytes = previewService.convertByUrl(inputStream, translator.getTargetFilename());
+        byte[] convertedFileBytes = previewService.convertByUrl(inputStream, translator.getSourceFileName());
         clock.stop();
         logger.info(" \n 文件链接：任务耗时 【{}】秒", clock.getTotalTimeSeconds());
         return ResponseEntity.ok().headers(translator.getHttpHeader()).body(convertedFileBytes);

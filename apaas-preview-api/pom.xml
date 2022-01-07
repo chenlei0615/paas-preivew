@@ -5,13 +5,13 @@
     <parent>
         <groupId>com.meicloud.apaas</groupId>
         <artifactId>apaas-preview</artifactId>
-        <version>1.0.0-RELEASE</version>
+        <version>1.1.0-RELEASE</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>com.meicloud.apaas</groupId>
     <artifactId>apaas-preview-api</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.1.0-RELEASE</version>
     <name>apaas-preview-api</name>
     <description>预览 api</description>
     <properties>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.meicloud.apaas</groupId>
             <artifactId>apaas-preview-core</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>1.1.0-RELEASE</version>
         </dependency>
 
         <dependency>
