@@ -2,7 +2,7 @@ meicloud:
   apaas:
     preview:
       max-file-size: 30
-      store-path: /mnt
+      store-path: /data
 
 jodconverter:
   local:
@@ -10,7 +10,7 @@ jodconverter:
     # 设置LibreOffice主目录
     office-home: /usr/lib64/libreoffice
     port-numbers: 8100
-    max-tasks-per-process: 20
+    max-tasks-per-process: 20d
     task-execution-timeout: 140000
     task-queue-timeout: 90000
     kill-existing-process: true
