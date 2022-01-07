@@ -20,7 +20,7 @@ public class HtmlParseUtil {
     public static String editHtml(File targetFile, String storePath) {
         String html = "";
         try {
-            Document document = Jsoup.parse(targetFile, "GB2312");
+            Document document = Jsoup.parse(targetFile, "UTF-8");
             Elements imgList = document.body().getElementsByTag("img");
             if (CollectionUtils.isEmpty(imgList)) {
                 return html;

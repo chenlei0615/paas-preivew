@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -114,7 +115,7 @@ public class StreamConverter {
             if (StringUtils.isEmpty(editHtml)) {
                 bytes = FileUtils.readFileToByteArray(targetFile);
             } else {
-                bytes = editHtml.getBytes("GB2312");
+                bytes = editHtml.getBytes(StandardCharsets.UTF_8);
             }
         } catch (OfficeException e) {
             logger.error(" 转化流异常: {} ", e.getStackTrace());
