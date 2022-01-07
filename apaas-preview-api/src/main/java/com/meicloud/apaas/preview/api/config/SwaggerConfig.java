@@ -35,7 +35,7 @@ public class SwaggerConfig {
 
     private static final String AUTHORIZATION = "Authorization";
     private static final String HEADER = "header";
-    private static final String BASE_PACKAGE = "com.meicloud.ship";
+    private static final String BASE_PACKAGE = "com.meicloud.apaas";
 
     @Value("${swagger.enable}")
     private final boolean enableSwagger = true;
